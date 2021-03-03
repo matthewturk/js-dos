@@ -8,7 +8,7 @@
 #include "dos_inc.h" /* for Drives[] */
 #include "dosbox.h"
 #include "src/dos/drives.h"
-#include "jsdos-timer.h"
+#include "jsdos-asyncify.h"
 
 
 EM_JS(void, emsc_dump_memory_contents, (HostPt memBase,
@@ -71,7 +71,8 @@ extern "C" void EMSCRIPTEN_KEEPALIVE rescanFilesystem() {
 }
 
 Bitu DosBox_Pause(void) {
-  DelayWithYield(1);
+  asyncify_sleep(1);
+  return 0;
 }
 
 extern "C" void EMSCRIPTEN_KEEPALIVE toggleDebugger() {
