@@ -75,17 +75,18 @@ Bitu DosBox_Pause(void) {
   return 0;
 }
 
-extern "C" void EMSCRIPTEN_KEEPALIVE toggleDebugger() {
+extern "C" bool EMSCRIPTEN_KEEPALIVE pauseExecution(bool shouldPause) {
   // This will toggle the debugger mode. We replicate some logic here to avoid
   // displaying the debugger code ons-screen.
   static bool debuggingEnabled = false;
-  if(debuggingEnabled) {
-    debuggingEnabled = false;
-    DOSBOX_SetNormalLoop();
-  } else {
+  if(shouldPause) {
     debuggingEnabled = true;
     DOSBOX_SetLoop(&DosBox_Pause);
+  } else {
+    debuggingEnabled = false;
+    DOSBOX_SetNormalLoop();
   }
+  return debuggingEnabled;
 }
 
 #endif // ifdef EMSCRIPTEN
