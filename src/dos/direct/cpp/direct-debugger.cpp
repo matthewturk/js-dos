@@ -6,7 +6,9 @@
 #include "mem.h"
 #include "regs.h"
 #include "dos_inc.h" /* for Drives[] */
+#include "dosbox.h"
 #include "src/dos/drives.h"
+#include "debug.h"
 
 EM_JS(void, emsc_dump_memory_contents, (HostPt memBase,
             uint32_t ip, uint32_t flags, void *regs,
@@ -65,6 +67,19 @@ extern "C" void EMSCRIPTEN_KEEPALIVE rescanFilesystem() {
     if (Drives[i]) Drives[i]->EmptyCache();
   }
   return;
+}
+
+extern "C" void EMSCRIPTEN_KEEPALIVE toggleDebugger() {
+  // This will toggle the debugger mode. We replicate some logic here to avoid
+  // displaying the debugger code ons-screen.
+  static bool debuggingEnabled = false;
+  if(debuggingEnabled) {
+    debuggingEnabled = false;
+    DOSBOX_SetNormalLoop();
+  } else {
+    debuggingEnabled = true;
+    DOSBOX_SetLoop(&DEBUG_Loop);
+  }
 }
 
 #endif // ifdef EMSCRIPTEN
