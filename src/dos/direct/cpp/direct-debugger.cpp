@@ -8,7 +8,8 @@
 #include "dos_inc.h" /* for Drives[] */
 #include "dosbox.h"
 #include "src/dos/drives.h"
-#include "debug.h"
+#include "jsdos-timer.h"
+
 
 EM_JS(void, emsc_dump_memory_contents, (HostPt memBase,
             uint32_t ip, uint32_t flags, void *regs,
@@ -69,6 +70,10 @@ extern "C" void EMSCRIPTEN_KEEPALIVE rescanFilesystem() {
   return;
 }
 
+Bitu DosBox_Pause(void) {
+  DelayWithYield(1);
+}
+
 extern "C" void EMSCRIPTEN_KEEPALIVE toggleDebugger() {
   // This will toggle the debugger mode. We replicate some logic here to avoid
   // displaying the debugger code ons-screen.
@@ -78,7 +83,7 @@ extern "C" void EMSCRIPTEN_KEEPALIVE toggleDebugger() {
     DOSBOX_SetNormalLoop();
   } else {
     debuggingEnabled = true;
-    DOSBOX_SetLoop(&DEBUG_Loop);
+    DOSBOX_SetLoop(&DosBox_Pause);
   }
 }
 
